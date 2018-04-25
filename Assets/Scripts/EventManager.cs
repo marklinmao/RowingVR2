@@ -11,12 +11,10 @@ public class EventManager : MonoBehaviour {
     private Vector3 rowingDirection;
     private float rowingForce;
     
-    // Use this for initialization
     void Start () {
 		
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		if(RowingDetected()) {
             OnRowed(rowingDirection, rowingForce);
@@ -33,6 +31,8 @@ public class EventManager : MonoBehaviour {
         //accelytext.getcomponent<text>().text = gvrcontrollerinput.accel.y.tostring("f2");
         //accelztext.getcomponent<text>().text = gvrcontrollerinput.accel.z.tostring("f2");
 
+
+        //Add calculation algorithms here!
         rowingDirection = new Vector3(0, 0, 0);
         rowingForce = 0f;
 
