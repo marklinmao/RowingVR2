@@ -6,8 +6,7 @@
 [Aa]pp/
 [Aa]pps/
 Assets/AssetStoreTools*
-Assets/GoogleVR*
-Assets/Standard\ Assets*
+Assets/Imported/
 
 # Visual Studio cache directory
 .vs/
