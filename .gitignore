@@ -3,9 +3,11 @@
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
+[Aa]pp/
+[Aa]pps/
 Assets/AssetStoreTools*
 Assets/GoogleVR*
-Assets/"Standard Assets"*
+Assets/Standard\ Assets*
 
 # Visual Studio cache directory
 .vs/
