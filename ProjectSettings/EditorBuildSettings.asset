@@ -5,6 +5,9 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SimpleSpeedway.unity
     guid: d41c34ffa494cdd4a971b34d692ae4b9
+  - enabled: 1
+    path: Assets/Scenes/Simple.unity
+    guid: 0a0f327b047d5e54399c3115ade4cac4

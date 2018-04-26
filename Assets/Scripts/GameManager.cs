@@ -11,9 +11,9 @@ public class GameManager : MonoBehaviour
 
     public GameObject canvasInit;
     public GameObject canvasPlaying;
-    public GameObject canvasFailure;
     public GameObject canvasSuccess;
-    public const String sceneName = "Main";
+    public GameObject canvasFailure;
+    public const String defaultScene = "Simple";
 
     public GameObject player;
     //public GameObject timeSpentValue;
@@ -149,7 +149,7 @@ public class GameManager : MonoBehaviour
 
     public void SwitchToInitState()
     {
-        SceneManager.LoadScene(GameManager.sceneName);
+        SceneManager.LoadScene(GameManager.defaultScene);
         timestampGameStart = Time.time;
     }
 

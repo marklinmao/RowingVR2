@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
 
     public GameObject distanceValueText;
     public GameObject speedValueText;
+    public GameObject timerValueText;
     public GameObject gyroXText;
     public GameObject gyroYText;
     public GameObject gyroZText;
@@ -50,18 +51,21 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        //show alarm screen
+        //show notification screen
         if (gameManager.IsPlayingState())
         {
 
         }
 
-        //show speed
-        speedNumber = speedAccumulated.magnitude / 20;
-        speedValueText.GetComponent<Text>().text = speedNumber.ToString("F2");
-
         //show distance left
         distanceValueText.GetComponent<Text>().text = GetDistance().ToString("F2");
+
+        //show speed
+        speedNumber = speedAccumulated.magnitude / 100;
+        speedValueText.GetComponent<Text>().text = speedNumber.ToString("F2");
+
+        //show timer
+        //timerValueText.GetComponent<Text>().text = xxxxx.ToString("F2");
 
         //show instant sensor data
         gyroXText.GetComponent<Text>().text = GvrControllerInput.Gyro.x.ToString("F2");
@@ -76,14 +80,12 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
 
-        //if (gameManager.IsPlayingState())
-        //{
-            // Speed up by clicking on TouchPad
+        if (gameManager.IsPlayingState())
+        {
             if (GvrControllerInput.ClickButton)
             {
                 speed += acceleration;
                 
-
                 Vector3 targetPos = GvrControllerInput.Orientation * Vector3.forward;
                 horizontalDirection.Set(targetPos.x, 0, targetPos.z);
                 rb.AddRelativeForce(horizontalDirection.normalized * speed, ForceMode.Force);
@@ -94,18 +96,12 @@ public class PlayerController : MonoBehaviour
             {
                 speed = 0;
             }
-        //}
+        }
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        if (!other.gameObject.CompareTag("Land"))
-        {
-            Debug.Log(">>>>>>>>>>>>>collision!>>>>>>>>>>>>>>>>>" + other.gameObject.tag + ", " + other.gameObject.name);
-            gameManager.SwitchToFailureState();
-        }
-        else
-            Debug.Log(">>>>>>>>>>>>>collision with land!!>>>>>>>>>>>>>>>>>" + other.gameObject.tag + ", " + other.gameObject.name);
+        gameManager.SwitchToFailureState();
     }
 
     public float GetDistance()
@@ -132,12 +128,12 @@ public class PlayerController : MonoBehaviour
 
     void OnEnable()
     {
-        EventManager.OnRowed += Move;
+        //EventManager.OnRowed += Move;
     }
 
     void OnDisable()
     {
-        EventManager.OnRowed -= Move;    
+        //EventManager.OnRowed -= Move;    
     }
 
     private void Move(Vector3 direction, float force)

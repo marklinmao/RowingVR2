@@ -16,9 +16,9 @@ public class EventManager : MonoBehaviour {
 	}
 
 	void Update () {
-		if(RowingDetected()) {
-            OnRowed(rowingDirection, rowingForce);
-        }
+		//if(RowingDetected()) {
+  //          OnRowed(rowingDirection, rowingForce);
+  //      }
 	}
 
     //The key algorithms to detect the rowing action
