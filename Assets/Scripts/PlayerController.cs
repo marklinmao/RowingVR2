@@ -1,6 +1,6 @@
 ﻿//using System;
 //using System.Collections;
-//using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
@@ -40,6 +40,13 @@ public class PlayerController : MonoBehaviour
     private float timestampOfClickBtnDown = 0.0f;
     private float timeElapsed = 0f;
 
+    //buffer of accel sensor data
+    private IList<Vector3> accelBuffer = new List<Vector3>();
+    private const int ACCEL_BUFFER_SIZE = 200;
+
+    private GameObject lineAccelXGameObject;
+    private LineRenderer lineRenderAccelX;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -47,16 +54,53 @@ public class PlayerController : MonoBehaviour
         initialRotation = transform.rotation;
         initialCameraRotation = Camera.main.transform.rotation;
         gameManager = (GameManager)Camera.main.GetComponent(typeof(GameManager));
+
+        
+        
     }
 
     void Update()
     {
-        //show notification screen
+        //show notification screen if needed
         if (gameManager.IsPlayingState())
         {
+            
+
+            Vector3 accelData = GvrControllerInput.Accel;
+            Vector3 gyroData = GvrControllerInput.Gyro;
+            PushToAccelBuffer(accelData);
+
+
+            ShowSensorData(accelData, gyroData);
+
+
+
+            if (lineRenderAccelX == null)
+            {
+                lineAccelXGameObject = GameObject.Find("LineAccelX");
+                if (lineAccelXGameObject != null)
+                {
+                    lineRenderAccelX = (LineRenderer)lineAccelXGameObject.GetComponent("LineRenderer");
+                    lineRenderAccelX.positionCount = ACCEL_BUFFER_SIZE;
+                }
+            }
+
+            if(lineRenderAccelX != null)
+                ShowSensorDataVisualization();
 
         }
 
+    }
+
+    private void PushToAccelBuffer(Vector3 accelData)
+    {
+        if (accelBuffer.Count > ACCEL_BUFFER_SIZE)
+            accelBuffer.RemoveAt(0);
+        accelBuffer.Add(accelData);
+    }
+
+    private void ShowSensorData(Vector3 accelData, Vector3 gyroData)
+    {
         //show distance left
         distanceValueText.GetComponent<Text>().text = GetDistance().ToString("F2");
 
@@ -68,13 +112,22 @@ public class PlayerController : MonoBehaviour
         //timerValueText.GetComponent<Text>().text = xxxxx.ToString("F2");
 
         //show instant sensor data
-        gyroXText.GetComponent<Text>().text = GvrControllerInput.Gyro.x.ToString("F2");
-        gyroYText.GetComponent<Text>().text = GvrControllerInput.Gyro.y.ToString("F2");
-        gyroZText.GetComponent<Text>().text = GvrControllerInput.Gyro.z.ToString("F2");
-        accelXText.GetComponent<Text>().text = GvrControllerInput.Accel.x.ToString("F2");
-        accelYText.GetComponent<Text>().text = GvrControllerInput.Accel.y.ToString("F2");
-        accelZText.GetComponent<Text>().text = GvrControllerInput.Accel.z.ToString("F2");
+        accelXText.GetComponent<Text>().text = accelData.x.ToString("F2");
+        accelYText.GetComponent<Text>().text = accelData.y.ToString("F2");
+        accelZText.GetComponent<Text>().text = accelData.z.ToString("F2");
+        gyroXText.GetComponent<Text>().text = gyroData.x.ToString("F2");
+        gyroYText.GetComponent<Text>().text = gyroData.y.ToString("F2");
+        gyroZText.GetComponent<Text>().text = gyroData.z.ToString("F2");
+    }
 
+    private void ShowSensorDataVisualization()
+    {
+        int index = 0;
+        foreach (Vector3 accel in accelBuffer)
+        {
+            lineRenderAccelX.SetPosition(index, new Vector3(0, accel.x, 0));
+            index++;
+        }
     }
 
     private void FixedUpdate()
@@ -144,7 +197,6 @@ public class PlayerController : MonoBehaviour
         rowingForce.GetComponent<Text>().text = force.ToString("F2");
 
         //TODO... moving the boat
-
     }
 
 }

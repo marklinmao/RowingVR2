@@ -6,8 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Scenes/SimpleSpeedway.unity
-    guid: d41c34ffa494cdd4a971b34d692ae4b9
-  - enabled: 1
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
     path: Assets/Scenes/Simple.unity
     guid: 0a0f327b047d5e54399c3115ade4cac4
+  - enabled: 1
+    path: Assets/Scenes/SensorTest.unity
+    guid: 71cdb6f66807b4e49b9207224373e138

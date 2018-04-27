@@ -30,7 +30,6 @@ public class GameManager : MonoBehaviour
     private float timestampOfAppBtnDown = 0.0f;
 
     private static float scoreTimeCost = 0f;
-    private static float scoreOxygenConsummed = 0f;
     private static float highScore = 10000f;
 
     void Start()
