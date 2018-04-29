@@ -54,9 +54,6 @@ public class PlayerController : MonoBehaviour
         initialRotation = transform.rotation;
         initialCameraRotation = Camera.main.transform.rotation;
         gameManager = (GameManager)Camera.main.GetComponent(typeof(GameManager));
-
-        
-        
     }
 
     void Update()
