@@ -61,16 +61,11 @@ public class PlayerController : MonoBehaviour
         //show notification screen if needed
         if (gameManager.IsPlayingState())
         {
-            
-
             Vector3 accelData = GvrControllerInput.Accel;
             Vector3 gyroData = GvrControllerInput.Gyro;
             PushToAccelBuffer(accelData);
 
-
             ShowSensorData(accelData, gyroData);
-
-
 
             if (lineRenderAccelX == null)
             {
@@ -129,7 +124,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-
         if (gameManager.IsPlayingState())
         {
             if (GvrControllerInput.ClickButton)
@@ -143,7 +137,9 @@ public class PlayerController : MonoBehaviour
                 speedAccumulated = horizontalDirection.normalized * speed + speedAccumulated;
             }
             else
+            {
                 speed = 0;
+            }
         }
     }
 
@@ -192,6 +188,7 @@ public class PlayerController : MonoBehaviour
         rowingForce.GetComponent<Text>().text = force.ToString("F2");
 
         //TODO... moving the boat
+
     }
 
 }
