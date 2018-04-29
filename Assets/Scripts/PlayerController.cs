@@ -40,12 +40,6 @@ public class PlayerController : MonoBehaviour
     private float timestampOfClickBtnDown = 0.0f;
     private float timeElapsed = 0f;
 
-    //buffer of accel sensor data
-    private IList<Vector3> accelBuffer = new List<Vector3>();
-    private const int ACCEL_BUFFER_SIZE = 200;
-
-    private GameObject lineAccelXGameObject;
-    private LineRenderer lineRenderAccelX;
 
     void Start()
     {
@@ -58,40 +52,16 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        //show notification screen if needed
         if (gameManager.IsPlayingState())
         {
             Vector3 accelData = GvrControllerInput.Accel;
             Vector3 gyroData = GvrControllerInput.Gyro;
-            PushToAccelBuffer(accelData);
-
-            ShowSensorData(accelData, gyroData);
-
-            if (lineRenderAccelX == null)
-            {
-                lineAccelXGameObject = GameObject.Find("LineAccelX");
-                if (lineAccelXGameObject != null)
-                {
-                    lineRenderAccelX = (LineRenderer)lineAccelXGameObject.GetComponent("LineRenderer");
-                    lineRenderAccelX.positionCount = ACCEL_BUFFER_SIZE;
-                }
-            }
-
-            if(lineRenderAccelX != null)
-                ShowSensorDataVisualization();
-
+            ShowStatusData(accelData, gyroData);
         }
-
     }
 
-    private void PushToAccelBuffer(Vector3 accelData)
-    {
-        if (accelBuffer.Count > ACCEL_BUFFER_SIZE)
-            accelBuffer.RemoveAt(0);
-        accelBuffer.Add(accelData);
-    }
 
-    private void ShowSensorData(Vector3 accelData, Vector3 gyroData)
+    private void ShowStatusData(Vector3 accelData, Vector3 gyroData)
     {
         //show distance left
         distanceValueText.GetComponent<Text>().text = GetDistance().ToString("F2");
@@ -112,34 +82,26 @@ public class PlayerController : MonoBehaviour
         gyroZText.GetComponent<Text>().text = gyroData.z.ToString("F2");
     }
 
-    private void ShowSensorDataVisualization()
-    {
-        int index = 0;
-        foreach (Vector3 accel in accelBuffer)
-        {
-            lineRenderAccelX.SetPosition(index, new Vector3(0, accel.x, 0));
-            index++;
-        }
-    }
-
     private void FixedUpdate()
     {
         if (gameManager.IsPlayingState())
         {
-            if (GvrControllerInput.ClickButton)
-            {
-                speed += acceleration;
-                
-                Vector3 targetPos = GvrControllerInput.Orientation * Vector3.forward;
-                horizontalDirection.Set(targetPos.x, 0, targetPos.z);
-                rb.AddRelativeForce(horizontalDirection.normalized * speed, ForceMode.Force);
-
-                speedAccumulated = horizontalDirection.normalized * speed + speedAccumulated;
-            }
-            else
-            {
-                speed = 0;
-            }
+            ///////////////////////////////////////from spacewalk////////////////////////////////////
+            //if (GvrControllerInput.ClickButton)
+            //{
+            //    speed += acceleration;
+            //    
+            //    Vector3 targetPos = GvrControllerInput.Orientation * Vector3.forward;
+            //    horizontalDirection.Set(targetPos.x, 0, targetPos.z);
+            //    rb.AddRelativeForce(horizontalDirection.normalized * speed, ForceMode.Force);
+            //
+            //    speedAccumulated = horizontalDirection.normalized * speed + speedAccumulated;
+            //}
+            //else
+            //{
+            //    speed = 0;
+            //}
+            ////////////////////////////////////////////////////////////////////////////////////////
         }
     }
 
@@ -172,12 +134,12 @@ public class PlayerController : MonoBehaviour
 
     void OnEnable()
     {
-        //EventManager.OnRowed += Move;
+        SensorManager.OnRowed += Move;
     }
 
     void OnDisable()
     {
-        //EventManager.OnRowed -= Move;    
+        SensorManager.OnRowed -= Move;    
     }
 
     private void Move(Vector3 direction, float force)
@@ -185,10 +147,23 @@ public class PlayerController : MonoBehaviour
         rowingDirX.GetComponent<Text>().text = direction.x.ToString("F2");
         rowingDirY.GetComponent<Text>().text = direction.y.ToString("F2");
         rowingDirZ.GetComponent<Text>().text = direction.z.ToString("F2");
-        rowingForce.GetComponent<Text>().text = force.ToString("F2");
+        
+        //move the canoe
+        horizontalDirection.Set(direction.x, 0, direction.z);
+        float finalForce = ForceCalculation(force);
+        rowingForce.GetComponent<Text>().text = finalForce.ToString("F2");
+        rb.AddRelativeForce(horizontalDirection.normalized * finalForce, ForceMode.Force);
 
-        //TODO... moving the boat
+    }
 
+    private float sensorMax = 78;
+    private float sensorMin = 10f;
+    private float mappedMax = 5f;
+    private float mappedMin = 0.5f;
+    private float ForceCalculation(float sensorForce)
+    {
+        return sensorForce * 10;
+        //return ((sensorForce - sensorMin) / (sensorMax - sensorMin)) * (mappedMax - mappedMin) + mappedMin;
     }
 
 }

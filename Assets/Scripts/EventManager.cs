@@ -16,20 +16,15 @@ public class EventManager : MonoBehaviour {
 	}
 
 	void Update () {
-		//if(RowingDetected()) {
-  //          OnRowed(rowingDirection, rowingForce);
-  //      }
+		if(RowingDetected()) {
+            OnRowed(rowingDirection, rowingForce);
+        }
 	}
 
     //The key algorithms to detect the rowing action
     private bool RowingDetected() {
         //play with the data from gyroscope and accelerometer
-        //gyroxtext.getcomponent<text>().text = gvrcontrollerinput.gyro.x.tostring("f2");
-        //gyroytext.getcomponent<text>().text = gvrcontrollerinput.gyro.y.tostring("f2");
-        //gyroztext.getcomponent<text>().text = gvrcontrollerinput.gyro.z.tostring("f2");
-        //accelxtext.getcomponent<text>().text = gvrcontrollerinput.accel.x.tostring("f2");
-        //accelytext.getcomponent<text>().text = gvrcontrollerinput.accel.y.tostring("f2");
-        //accelztext.getcomponent<text>().text = gvrcontrollerinput.accel.z.tostring("f2");
+        
 
 
         //Add calculation algorithms here!
