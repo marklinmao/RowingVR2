@@ -143,9 +143,7 @@ public class PlayerController : MonoBehaviour
                 speedAccumulated = horizontalDirection.normalized * speed + speedAccumulated;
             }
             else
-            {
                 speed = 0;
-            }
         }
     }
 
