@@ -102,12 +102,20 @@ public class PlayerController : MonoBehaviour
             //    speed = 0;
             //}
             ////////////////////////////////////////////////////////////////////////////////////////
+
+            if(speedNumber > 2 )
+            {
+                Vector3 backForce = Vector3.back.normalized * 0.3f;
+                rb.AddRelativeForce(backForce, ForceMode.Force);
+
+                speedAccumulated -= backForce;
+            }
         }
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        gameManager.SwitchToFailureState();
+        //gameManager.SwitchToFailureState();
     }
 
     public float GetDistance()
@@ -150,10 +158,13 @@ public class PlayerController : MonoBehaviour
         
         //move the canoe
         horizontalDirection.Set(direction.x, 0, direction.z);
-        float finalForce = ForceCalculation(force);
-        rowingForce.GetComponent<Text>().text = finalForce.ToString("F2");
-        rb.AddRelativeForce(horizontalDirection.normalized * finalForce, ForceMode.Force);
+        float finalForceValue = ForceCalculation(force);
+        rowingForce.GetComponent<Text>().text = finalForceValue.ToString("F2");
 
+        Vector3 finalForce = horizontalDirection.normalized * finalForceValue;
+        rb.AddRelativeForce(finalForce, ForceMode.Force);
+
+        speedAccumulated += finalForce;
     }
 
     private float sensorMax = 78;
@@ -162,7 +173,7 @@ public class PlayerController : MonoBehaviour
     private float mappedMin = 0.5f;
     private float ForceCalculation(float sensorForce)
     {
-        return sensorForce * 10;
+        return sensorForce * 2;
         //return ((sensorForce - sensorMin) / (sensorMax - sensorMin)) * (mappedMax - mappedMin) + mappedMin;
     }
 
