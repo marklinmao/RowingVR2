@@ -60,7 +60,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
     private void ShowStatusData(Vector3 accelData, Vector3 gyroData)
     {
         //show distance left
@@ -103,13 +102,6 @@ public class PlayerController : MonoBehaviour
             //}
             ////////////////////////////////////////////////////////////////////////////////////////
 
-            if(speedNumber > 2 )
-            {
-                Vector3 backForce = Vector3.back.normalized * 0.3f;
-                rb.AddRelativeForce(backForce, ForceMode.Force);
-
-                speedAccumulated -= backForce;
-            }
         }
     }
 
