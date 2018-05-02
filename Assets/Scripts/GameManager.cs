@@ -32,6 +32,8 @@ public class GameManager : MonoBehaviour
     private static float scoreTimeCost = 0f;
     private static float highScore = 10000f;
 
+    public static float startPlayingTime;
+
     void Start()
     {
         playerController = (PlayerController)player.GetComponent(typeof(PlayerController));
@@ -134,6 +136,7 @@ public class GameManager : MonoBehaviour
     public void SwitchToPlayingState()
     {
         SetState(GameState.PlayingState);
+        startPlayingTime = Time.realtimeSinceStartup;
     }
 
     public void SwitchToFailureState()

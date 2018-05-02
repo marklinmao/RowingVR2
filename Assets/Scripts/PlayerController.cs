@@ -32,13 +32,20 @@ public class PlayerController : MonoBehaviour
     private Quaternion initialCameraRotation;
     private Vector3 horizontalDirection;
 
-    private float speed = 0f;
-    private Vector3 speedAccumulated = new Vector3(0, 0, 0);
-    public float speedNumber = 0f;
+    private float speedValue = 0f;
     private float acceleration = 0.5f;
 
     private float timestampOfClickBtnDown = 0.0f;
     private float timeElapsed = 0f;
+
+    //the track of the player
+    private List<Vector3> posTrackList = new List<Vector3>();
+    private const int POS_TRACKLIST_SIZE = 50;
+    private const float POS_TRACK_PERIOD = 1;
+
+
+    private void AddToTrakList(Vector3 position)     {         if (posTrackList.Count >= POS_TRACKLIST_SIZE)
+            posTrackList.RemoveAt(0);          posTrackList.Add(position);     }
 
 
     void Start()
@@ -58,27 +65,6 @@ public class PlayerController : MonoBehaviour
             Vector3 gyroData = GvrControllerInput.Gyro;
             ShowStatusData(accelData, gyroData);
         }
-    }
-
-    private void ShowStatusData(Vector3 accelData, Vector3 gyroData)
-    {
-        //show distance left
-        distanceValueText.GetComponent<Text>().text = GetDistance().ToString("F2");
-
-        //show speed
-        speedNumber = speedAccumulated.magnitude / 100;
-        speedValueText.GetComponent<Text>().text = speedNumber.ToString("F2");
-
-        //show timer
-        //timerValueText.GetComponent<Text>().text = xxxxx.ToString("F2");
-
-        //show instant sensor data
-        accelXText.GetComponent<Text>().text = accelData.x.ToString("F2");
-        accelYText.GetComponent<Text>().text = accelData.y.ToString("F2");
-        accelZText.GetComponent<Text>().text = accelData.z.ToString("F2");
-        gyroXText.GetComponent<Text>().text = gyroData.x.ToString("F2");
-        gyroYText.GetComponent<Text>().text = gyroData.y.ToString("F2");
-        gyroZText.GetComponent<Text>().text = gyroData.z.ToString("F2");
     }
 
     private void FixedUpdate()
@@ -102,7 +88,41 @@ public class PlayerController : MonoBehaviour
             //}
             ////////////////////////////////////////////////////////////////////////////////////////
 
+
+            //track position
+            AddToTrakList(this.transform.position);
+
+            //calculate and show speed
+            CalculateSpeed();
+
         }
+    }
+
+    private void CalculateSpeed()
+    {
+        float distance = Vector3.Distance(this.posTrackList[posTrackList.Count - 1], this.posTrackList[0]);
+        this.speedValue = distance / (Time.deltaTime * POS_TRACKLIST_SIZE);
+    }
+
+    private void ShowStatusData(Vector3 accelData, Vector3 gyroData)
+    {
+        //show distance left
+        distanceValueText.GetComponent<Text>().text = GetDistance().ToString("F2");
+
+        //show speed
+        //speedNumber = speedAccumulated.magnitude / 100;
+        speedValueText.GetComponent<Text>().text = speedValue.ToString("F2");
+
+        //show timer
+        timerValueText.GetComponent<Text>().text = (Time.realtimeSinceStartup - GameManager.startPlayingTime).ToString("F2");
+
+        //show instant sensor data
+        accelXText.GetComponent<Text>().text = accelData.x.ToString("F2");
+        accelYText.GetComponent<Text>().text = accelData.y.ToString("F2");
+        accelZText.GetComponent<Text>().text = accelData.z.ToString("F2");
+        gyroXText.GetComponent<Text>().text = gyroData.x.ToString("F2");
+        gyroYText.GetComponent<Text>().text = gyroData.y.ToString("F2");
+        gyroZText.GetComponent<Text>().text = gyroData.z.ToString("F2");
     }
 
     private void OnCollisionEnter(Collision other)
@@ -155,8 +175,6 @@ public class PlayerController : MonoBehaviour
 
         Vector3 finalForce = horizontalDirection.normalized * finalForceValue;
         rb.AddRelativeForce(finalForce, ForceMode.Force);
-
-        speedAccumulated += finalForce;
     }
 
     private float sensorMax = 78;
