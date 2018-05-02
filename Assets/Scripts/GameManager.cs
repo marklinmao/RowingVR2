@@ -33,12 +33,17 @@ public class GameManager : MonoBehaviour
     private static float highScore = 10000f;
 
     public static float startPlayingTime;
+    public static float bestCompletePlayingTime = 9999.99f;
+
+    public GameObject backgroundMusicObject;
+    private AudioSource backgroundMusicAudio;
 
     void Start()
     {
         playerController = (PlayerController)player.GetComponent(typeof(PlayerController));
         SetState(GameState.InitState);
         timestampGameStart = Time.time;
+        backgroundMusicAudio = backgroundMusicObject.GetComponent<AudioSource>();
     }
 
     void Update()
@@ -110,7 +115,7 @@ public class GameManager : MonoBehaviour
 
     private void EnableBackgroundMusic(bool enabled)
     {
-        //TODO all sounds to be enabled
+        backgroundMusicAudio.enabled = enabled;
     }
 
     private bool IsAppBtnLongPressed(float lastingInSeconds)
@@ -147,6 +152,9 @@ public class GameManager : MonoBehaviour
     public void SwitchToSuccessState()
     {
         SetState(GameState.SuccessState);
+        float completePlayingTime = Time.realtimeSinceStartup - startPlayingTime;
+        if (completePlayingTime < bestCompletePlayingTime)
+            bestCompletePlayingTime = completePlayingTime;
     }
 
     public void SwitchToInitState()

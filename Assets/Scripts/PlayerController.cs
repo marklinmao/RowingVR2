@@ -7,7 +7,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    private Vector3 departurePosition;
     public Transform destinationPosition;
+
+    public GameObject timeCostValueText;
+
+    public GameObject goScreen;
+    public GameObject rushScreen;
 
     public GameObject distanceValueText;
     public GameObject speedValueText;
@@ -27,9 +33,6 @@ public class PlayerController : MonoBehaviour
     private GameManager gameManager;
     private Rigidbody rb;
 
-    private Vector3 initialPosition;
-    private Quaternion initialRotation;
-    private Quaternion initialCameraRotation;
     private Vector3 horizontalDirection;
 
     private float speedValue = 0f;
@@ -48,22 +51,30 @@ public class PlayerController : MonoBehaviour
             posTrackList.RemoveAt(0);          posTrackList.Add(position);     }
 
 
+    private void Awake()
+    {
+        this.departurePosition = this.transform.position;
+    }
+
+
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        initialPosition = transform.position;
-        initialRotation = transform.rotation;
-        initialCameraRotation = Camera.main.transform.rotation;
-        gameManager = (GameManager)Camera.main.GetComponent(typeof(GameManager));
+        this.rb = GetComponent<Rigidbody>();
+        this.gameManager = (GameManager)Camera.main.GetComponent(typeof(GameManager));
     }
 
     void Update()
     {
+        if(gameManager.IsInitState())
+        {
+            ShowInitStatus();
+        }
+
         if (gameManager.IsPlayingState())
         {
             Vector3 accelData = GvrControllerInput.Accel;
             Vector3 gyroData = GvrControllerInput.Gyro;
-            ShowStatusData(accelData, gyroData);
+            ShowPlayingStatus(accelData, gyroData);
         }
     }
 
@@ -88,13 +99,41 @@ public class PlayerController : MonoBehaviour
             //}
             ////////////////////////////////////////////////////////////////////////////////////////
 
-
             //track position
             AddToTrakList(this.transform.position);
 
             //calculate and show speed
             CalculateSpeed();
 
+
+            //show notification screen
+            if (Vector3.Distance(this.transform.position, this.departurePosition) < 100)
+                showNotificationScreen(goScreen, 1f);
+            else
+                goScreen.SetActive(false);
+
+            if (Vector3.Distance(this.transform.position, this.destinationPosition.position) < 200)
+                showNotificationScreen(rushScreen, 1f);
+            else
+                rushScreen.SetActive(false);
+        }
+        
+    }
+
+    private void showNotificationScreen(GameObject alarmScreenObject, float interval)
+    {
+        timeElapsed += Time.deltaTime;
+        if (timeElapsed > interval)
+        {
+            if (alarmScreenObject.activeSelf)
+            {
+                alarmScreenObject.SetActive(false);
+            }
+            else
+            {
+                alarmScreenObject.SetActive(true);
+            }
+            timeElapsed = 0f;
         }
     }
 
@@ -104,7 +143,12 @@ public class PlayerController : MonoBehaviour
         this.speedValue = distance / (Time.deltaTime * POS_TRACKLIST_SIZE);
     }
 
-    private void ShowStatusData(Vector3 accelData, Vector3 gyroData)
+    private void ShowInitStatus()
+    {
+        timeCostValueText.GetComponent<Text>().text = GameManager.bestCompletePlayingTime.ToString("F2");
+    }
+
+    private void ShowPlayingStatus(Vector3 accelData, Vector3 gyroData)
     {
         //show distance left
         distanceValueText.GetComponent<Text>().text = GetDistance().ToString("F2");
