@@ -64,6 +64,9 @@ public class GameManager : MonoBehaviour
                 canvasPlaying.SetActive(false);
                 canvasFailure.SetActive(false);
                 canvasSuccess.SetActive(false);
+
+                //SwitchToPlayingState();
+
                 break;
 
             case GameState.PlayingState:

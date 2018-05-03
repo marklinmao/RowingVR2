@@ -5526,7 +5526,7 @@ MonoBehaviour:
   rowingDirY: {fileID: 679561296}
   rowingDirZ: {fileID: 1005506550}
   rowingForce: {fileID: 1884030034}
-  SensorForceAcceleration: 7
+  SensorForceAcceleration: 5
 --- !u!54 &788674403
 Rigidbody:
   m_ObjectHideFlags: 0
